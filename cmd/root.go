@@ -19,7 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package soundboard
+package cmd
 
 import (
 	"fmt"
@@ -39,14 +39,7 @@ var cfgUsers []types.SoundMap
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "soundboard",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-
+	Short: "Play sounds when JIRA tasks are done.",
 	Run: func(soundboard *cobra.Command, args []string) {
 		webhook.Listen(cfgUsers)
 	},
