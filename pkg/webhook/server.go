@@ -30,11 +30,11 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, v := range users {
-		if v.IsJiraUser(b.User) {
+		if v.IsJiraUser(b.User) && b.Issue.Fields.Status.Status == "Done" {
 			samples <- v.ClipName
 		}
 	}
 
-	fmt.Println("got webhook payload:")
-	fmt.Println(b.Issue.Fields.Points, b.User.Key, b.Issue.Fields.Status.Status)
+	fmt.Printf("got webhook payload\t%.1f Points\tUser: %s\tNew Status: %s\n",
+		b.Issue.Fields.Points, b.User.Key, b.Issue.Fields.Status.Status)
 }
