@@ -1,14 +1,10 @@
 package webhook
 
-type Webhook struct {
-	User  User  `json:"user"`
-	Issue Issue `json:"issue"`
-}
+import "github.com/LeviMatus/soundboard/types"
 
-type User struct {
-	Name     string `json:"name"`
-	Key      string `json:"key"`
-	DispName string `json:"displayName"`
+type Webhook struct {
+	User  types.JiraUser `json:"user"`
+	Issue Issue          `json:"issue"`
 }
 
 type Issue struct {
