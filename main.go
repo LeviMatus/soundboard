@@ -1,55 +1,30 @@
+/*
+Copyright © 2019 Levi Matus
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/LeviMatus/soundboard/pkg/sounds"
-	"github.com/LeviMatus/soundboard/pkg/webhook"
-	"github.com/spf13/viper"
-	"log"
-	"net/http"
+	"github.com/LeviMatus/soundboard/cmd"
 )
 
-var samples = make(chan string, 10)
-var users []sounds.User
-
-func handleWebhook(w http.ResponseWriter, r *http.Request) {
-	log.Println("got here")
-
-	var b webhook.Webhook
-	err := json.NewDecoder(r.Body).Decode(&b)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	for _, v := range users {
-		if v.IsUser(b.User) {
-			samples <- v.ClipName
-		}
-	}
-
-	fmt.Println("got webhook payload:")
-	fmt.Println(b.Issue.Fields.Points, b.User.Key, b.Issue.Fields.Status.Status)
-}
-
 func main() {
-
-	var v = viper.New()
-	v.SetConfigType("yaml")
-	v.SetConfigFile("sounds.yaml")
-	v.AddConfigPath("/home/levi/GolandProjects/soundboard")
-	v.ReadInConfig()
-
-	err := v.Unmarshal(&users)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	go sounds.Consume(samples)
-	log.Println("server started")
-	http.HandleFunc("/webhook", handleWebhook)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	cmd.Execute()
 }

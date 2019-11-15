@@ -5,8 +5,10 @@ import (
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/speaker"
+	"github.com/spf13/viper"
 	"log"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -17,16 +19,25 @@ func init() {
 }
 
 var (
-	sr beep.SampleRate
+	sr       beep.SampleRate
+	clipPath string
+	once     sync.Once
 )
 
 func Consume(ch <-chan string) {
-	fmt.Println("waiting for a sample....")
+	once.Do(func() {
+		clipPath = viper.GetString("clip_path")
+		if clipPath == "" {
+			fmt.Println("Unable to access path to clip. Is it specified?")
+			os.Exit(1)
+		}
+		fmt.Printf("Use path %s for finding audio clips\n", clipPath)
+	})
+
 	for {
-		fmt.Println("Got one!")
 		fn := <-ch
 
-		f, err := os.Open(fn)
+		f, err := os.Open(clipPath + fn)
 		if err != nil {
 			log.Fatal(err)
 		}
