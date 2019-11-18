@@ -71,14 +71,14 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	} else {
 		// Find home directory.
-		_, err := homedir.Dir()
+		home, err := homedir.Dir()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
 		// Search config in home directory with name ".soundboard" (without extension).
-		viper.SetConfigFile("/home/levi/.soundboard.yaml")
+		viper.SetConfigFile(home + "/.soundboard.yaml")
 		viper.SetConfigType("yaml")
 	}
 
